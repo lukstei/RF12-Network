@@ -54,9 +54,7 @@ protected:
         default:
           handleMessage();
           
-#if DEBUG
           LOGN("Received data, length =", rf12_len);
-#endif
           break;
       }
     }

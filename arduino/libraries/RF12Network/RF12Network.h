@@ -1,9 +1,9 @@
 #ifndef __RF12NETWORK_H__
 #define __RF12NETWORK_H__
 
-//#define DEBUG 1
+#define DEBUG 1
 
-#define ID_BC 0 //broadcast
+#define ID_BC     0 //broadcast
 #define ID_MASTER 1
 
 #define FLAG_NEED_ACK 1
@@ -57,7 +57,8 @@ typedef struct
 
 enum MessageTypes
 {
-  MSG_FWD = 22, // Forward
+  MSG_NO_DATA,
+  MSG_FWD, // Forward
   MSG_NODE_DISCOVER, // Slave auf suche, bitte melden
   MSG_NODE_FOUND, // Freund gefunden
   MSG_POTI_VALUES,
@@ -76,10 +77,11 @@ enum MessageTypes
 # define LOGC(ch)                Serial.print(ch)
 
 # define ENUM_AS_STRING(name) #name
-# define LOGM(str, enu)    PRELOG(); Serial.print(str); Serial.print(" "); Serial.println(MessageTypesNames[enu - 22])
+# define LOGM(str, enu)    PRELOG(); Serial.print(str); Serial.print(" "); Serial.println(MessageTypesNames[enu])
 
 const char* MessageTypesNames[] =
 {
+  ENUM_AS_STRING(MSG_NO_DATA),
   ENUM_AS_STRING(MSG_FWD), // Forward
   ENUM_AS_STRING(MSG_NODE_DISCOVER), // Slave auf suche, bitte melden
   ENUM_AS_STRING(MSG_NODE_FOUND), // Freund gefunden
