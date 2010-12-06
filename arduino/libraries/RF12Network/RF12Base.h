@@ -127,11 +127,12 @@ public:
     
     sendMessage.head.messageType = msg_type;
     
-    sendMessage.head.messageLength = sizeof(sendMessage.head) +len;
+    sendMessage.head.messageLength = sizeof(sendMessage.head) + len;
   };
 
   virtual void doWork() {
     if (rf12_recvDone()) {
+
       if (rf12_crc == 0 && 
           (receivedMessage->head.messageReceiver == myId || 
           receivedMessage->head.messageReceiver == ID_BC ))

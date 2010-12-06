@@ -11,8 +11,8 @@
 // version 2 does include the group code in the crc
 #define RF12_VERSION    1
 
-#define rf12_len        rf12_buf[0]
 #define rf12_data       (rf12_buf)
+#define rf12_len        rf12_data[0]
 
 #define RF12_MAXDATA    66
 

@@ -99,9 +99,9 @@ static void rf12_interrupt() {
     if (rxstate == TXRECV) {
         uint8_t in = rf12_xfer(RF_RX_FIFO_READ);
 
-        if (rxfill == 0 && group != 0)
-            rf12_buf[rxfill++] = group;
-            
+        //if (rxfill == 0 && group != 0)
+        //    rf12_buf[rxfill++] = group;
+
         rf12_buf[rxfill++] = in;
         rf12_crc = _crc16_update(rf12_crc, in);
 
@@ -117,7 +117,7 @@ static void rf12_interrupt() {
         } else
             switch (rxstate++) {
                 case TXSYN1: out = 0x2D; break;
-                case TXSYN2: out = group; rxstate = - (2 + rf12_len); break;
+                case TXSYN2: out = group; rxstate = - (rf12_len); break;
                 case TXCRC1: out = rf12_crc; break;
                 case TXCRC2: out = rf12_crc >> 8; break;
                 case TXDONE: rf12_xfer(RF_IDLE_MODE); // fall through
@@ -140,7 +140,7 @@ uint8_t rf12_recvDone () {
         rxstate = TXIDLE;
         if (rf12_len > RF12_MAXDATA)
             rf12_crc = 1; // force bad crc if packet length is invalid
-        return 1; // it's a broadcast packet or it's addressed to this node
+        return 1;
     }
     if (rxstate == TXIDLE)
         rf12_recvStart();
@@ -192,7 +192,7 @@ void rf12_sendWait (uint8_t mode) {
   optional group (0-255 for RF12B, only 212 allowed for RF12).
 */
 void rf12_initialize (uint8_t id, uint8_t band) {
-    group = 0x4D;
+    group = 0xD4;
 
     spi_initialize();
     
