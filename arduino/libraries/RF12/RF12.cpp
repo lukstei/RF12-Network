@@ -105,8 +105,9 @@ static void rf12_interrupt() {
         rf12_buf[rxfill++] = in;
         rf12_crc = _crc16_update(rf12_crc, in);
 
-        if (rxfill >= rf12_len + 2 || rxfill >= RF_MAX)
+        if (rxfill >= rf12_len + 2 || rxfill >= RF_MAX) {
             rf12_xfer(RF_IDLE_MODE);
+        }
     } else {
         uint8_t out;
 
@@ -166,6 +167,11 @@ uint8_t rf12_canSend () {
 void rf12_sendStart (void* ptr, uint8_t len) {
     memcpy((void*) rf12_data, ptr, len);
 
+    rf12_sendStart();
+}
+
+void rf12_sendStart() 
+{
     rf12_crc = ~0;
 
     rxstate = TXPRE1;
@@ -191,7 +197,7 @@ void rf12_sendWait (uint8_t mode) {
   Call this once with the node ID (0-31), frequency band (0-3), and
   optional group (0-255 for RF12B, only 212 allowed for RF12).
 */
-void rf12_initialize (uint8_t id, uint8_t band) {
+void rf12_initialize () {
     group = 0xD4;
 
     spi_initialize();
@@ -208,7 +214,7 @@ void rf12_initialize (uint8_t id, uint8_t band) {
     while (digitalRead(RFM_IRQ) == 0)
         rf12_xfer(0x0000);
         
-    rf12_xfer(0x80C7 | (band << 4)); // EL (ena TX), EF (ena RX FIFO), 12.0pF 
+    rf12_xfer(0x80C7 | (RF12_433MHZ << 4)); // EL (ena TX), EF (ena RX FIFO), 12.0pF 
     rf12_xfer(0xA640); // 868MHz 
     rf12_xfer(0xC606); // approx 49.2 Kbps, i.e. 10000/29/(1+6) Kbps
     rf12_xfer(0x94A2); // VDI,FAST,134kHz,0dBm,-91dBm 

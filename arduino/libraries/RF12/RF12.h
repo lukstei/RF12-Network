@@ -24,7 +24,7 @@ extern volatile uint16_t rf12_crc;  // running crc value, should be zero at end
 extern volatile uint8_t rf12_buf[]; // recv/xmit buf including hdr & crc bytes
 
 // call this once with the node ID, frequency band, and optional group
-void rf12_initialize(uint8_t id, uint8_t band);
+void rf12_initialize();
 
 // call this frequently, returns true if a packet has been received
 uint8_t rf12_recvDone(void);

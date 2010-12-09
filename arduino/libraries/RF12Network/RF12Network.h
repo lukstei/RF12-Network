@@ -1,6 +1,10 @@
 #ifndef __RF12NETWORK_H__
 #define __RF12NETWORK_H__
 
+#include <Ports.h>
+#include <RF12.h>
+#include "Formats.h"
+
 #define DEBUG 1
 
 #define ID_BC     0 //broadcast
@@ -9,42 +13,6 @@
 #define FLAG_NEED_ACK 1
 #define FLAG_ACK      2
 #define FLAG_NAK      4
-
-typedef uint8_t node_id;
-
-typedef struct
-{
-  struct Head
-  {
-    uint8_t messageLength; // important: must be the first item!
-
-    uint8_t flags;
-
-    node_id messageReceiver;
-    node_id messageSender;
-    node_id sender;
-    
-    uint8_t messageType;
-    
-  } head;
-
-  union Formats
-  {
-    uint8_t raw[RF12_MAXDATA - sizeof(Head)/sizeof(uint8_t)];  // Todo: richtige size?
-
-    struct MessageNodeFound
-    {
-      node_id nodeId;
-      uint8_t hierachyDepth;
-    } MessageNodeFound;
-
-    struct MessagePotiValues
-    {
-      int data[10];
-    } MessagePotiValues;
-  } data;
-  
-} RF12Message;
 
 
 #define RF12_MAX_DATA_LENGTH (RF12_MAXDATA - sizeof(RF12Message::Head)/sizeof(byte))
@@ -58,9 +26,12 @@ typedef struct
 enum MessageTypes
 {
   MSG_NO_DATA,
-  MSG_FWD, // Forward
-  MSG_NODE_DISCOVER, // Slave auf suche, bitte melden
-  MSG_NODE_FOUND, // Freund gefunden
+
+  NODE_DISCOVER, // Slave auf suche, bitte melden
+  NODE_FOUND, // Freund gefunden
+
+  MSG_FWD,
+
   MSG_POTI_VALUES,
   
   MSG_DATA_LOG // irgendwelche daten
@@ -82,9 +53,12 @@ enum MessageTypes
 const char* MessageTypesNames[] =
 {
   ENUM_AS_STRING(MSG_NO_DATA),
-  ENUM_AS_STRING(MSG_FWD), // Forward
-  ENUM_AS_STRING(MSG_NODE_DISCOVER), // Slave auf suche, bitte melden
-  ENUM_AS_STRING(MSG_NODE_FOUND), // Freund gefunden
+
+  ENUM_AS_STRING(NODE_DISCOVER), // Slave auf suche, bitte melden
+  ENUM_AS_STRING(NODE_FOUND), // Freund gefunden
+
+  ENUM_AS_STRING(MSG_FWD),
+
   ENUM_AS_STRING(MSG_POTI_VALUES),
   ENUM_AS_STRING(MSG_DATA_LOG), // irgendwelche daten
   

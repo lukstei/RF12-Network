@@ -1,2 +1,5 @@
-
+master/Master/Debug/
+master/Master/Master/Debug/
 private/
+*.sdf
+*.opensdf
