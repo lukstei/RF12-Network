@@ -7,12 +7,11 @@
 
 #include <stdint.h>
 
-// version 1 did not include the group code in the crc
-// version 2 does include the group code in the crc
 #define RF12_VERSION    1
 
 #define rf12_data       (rf12_buf)
 #define rf12_len        rf12_data[0]
+#define rf12_len_safe   (rf12_len > RF12_MAXDATA ? RF12_MAXDATA : rf12_len)
 
 #define RF12_MAXDATA    66
 
@@ -36,6 +35,8 @@ uint8_t rf12_canSend(void);
 // call this only when rf12_recvDone() or rf12_canSend() return true
 void rf12_sendStart(void* ptr, uint8_t len);
 
+void rf12_sendStart();
+
 // wait for send to finish, sleep mode: 0=none, 1=idle, 2=standby, 3=powerdown
 void rf12_sendWait (uint8_t mode);
 
@@ -52,5 +53,7 @@ char rf12_lowbat(void);
 
 // low-level control of the RFM12B via direct register access
 uint16_t rf12_control(uint16_t cmd);
+
+void rf12_set_receive_callback(void (*recv)());
 
 #endif

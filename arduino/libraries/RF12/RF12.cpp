@@ -43,16 +43,18 @@ enum {
 static volatile uint8_t rxfill;     // number of data bytes in rf12_buf
 static volatile int8_t rxstate;     // current transceiver state
 
+/*
 static uint8_t ezInterval;          // number of seconds between transmits
 static uint8_t ezSendBuf[RF12_MAXDATA]; // data to send
 static char ezSendLen;              // number of bytes to send
 static uint8_t ezPending;           // remaining number of retries
 static long ezNextSend[2];          // when was last retry [0] or data [1] sent
+*/
 
 volatile uint16_t rf12_crc;         // running crc value
 volatile uint8_t rf12_buf[RF_MAX];  // recv/xmit buf, including hdr & crc bytes
 
-static uint8_t group;               // network group
+//static uint8_t group;               // network group
 
 static void spi_initialize () {
     digitalWrite(SPI_SS, 1);
@@ -92,6 +94,11 @@ uint16_t rf12_control(uint16_t cmd) {
     return r;
 }
 
+void (*receive_callback)();
+void rf12_set_receive_callback(void (*recv)()) {
+  receive_callback = recv;
+}
+
 static void rf12_interrupt() {
     // a transfer of 2x 16 bits @ 2 MHz over SPI takes 2x 8 us inside this ISR
     rf12_xfer(0x0000);
@@ -106,7 +113,15 @@ static void rf12_interrupt() {
         rf12_crc = _crc16_update(rf12_crc, in);
 
         if (rxfill >= rf12_len + 2 || rxfill >= RF_MAX) {
-            rf12_xfer(RF_IDLE_MODE);
+          rf12_xfer(RF_IDLE_MODE); // receiver abschalten
+          
+          rxstate = TXIDLE;
+          if (rf12_len > RF12_MAXDATA)
+            rf12_crc = 1; // force bad crc if packet length is invalid
+          
+          if(receive_callback != NULL) {
+            (*receive_callback)();
+          }
         }
     } else {
         uint8_t out;
@@ -118,10 +133,11 @@ static void rf12_interrupt() {
         } else
             switch (rxstate++) {
                 case TXSYN1: out = 0x2D; break;
-                case TXSYN2: out = group; rxstate = - (rf12_len); break;
+                case TXSYN2: out = 0xD4; rxstate = - (rf12_len); break;
                 case TXCRC1: out = rf12_crc; break;
                 case TXCRC2: out = rf12_crc >> 8; break;
-                case TXDONE: rf12_xfer(RF_IDLE_MODE); // fall through
+                case TXDONE: rf12_xfer(RF_IDLE_MODE); 
+                              //Serial.println(micros(), DEC);// fall through
                 default:     out = 0xAA;
             }
             
@@ -129,7 +145,8 @@ static void rf12_interrupt() {
     }
 }
 
-static void rf12_recvStart () {
+static void rf12_recvStart () 
+{
     rxfill = rf12_len = 0;
     rf12_crc = ~0;
     rxstate = TXRECV;    
@@ -141,7 +158,8 @@ uint8_t rf12_recvDone () {
         rxstate = TXIDLE;
         if (rf12_len > RF12_MAXDATA)
             rf12_crc = 1; // force bad crc if packet length is invalid
-        return 1;
+        
+        return 1;  // TODO: if abfrage kann rausgelöscht werden - behandlung in isr
     }
     if (rxstate == TXIDLE)
         rf12_recvStart();
@@ -164,7 +182,8 @@ uint8_t rf12_canSend () {
     return 0;
 }
 
-void rf12_sendStart (void* ptr, uint8_t len) {
+void rf12_sendStart (void* ptr, uint8_t len) 
+{
     memcpy((void*) rf12_data, ptr, len);
 
     rf12_sendStart();
@@ -173,24 +192,11 @@ void rf12_sendStart (void* ptr, uint8_t len) {
 void rf12_sendStart() 
 {
     rf12_crc = ~0;
-
+ 
+    //Serial.println(micros(), DEC);
+ 
     rxstate = TXPRE1;
     rf12_xfer(RF_XMITTER_ON); // bytes will be fed via interrupts
-}
-
-void rf12_sendWait (uint8_t mode) {
-    // wait for packet to actually finish sending
-    // go into low power mode, as interrupts are going to come in very soon
-    while (rxstate != TXIDLE)
-        if (mode) {
-            // power down mode is only possible if the fuses are set to start
-            // up in 258 clock cycles, i.e. approx 4 us - else must use standby!
-            // modes 2 and higher may lose a few clock timer ticks
-            set_sleep_mode(mode == 1 ? SLEEP_MODE_IDLE :
-                            mode == 2 ? SLEEP_MODE_STANDBY
-                                       : SLEEP_MODE_PWR_DOWN);
-            sleep_mode();
-        }
 }
 
 /*!
@@ -198,22 +204,20 @@ void rf12_sendWait (uint8_t mode) {
   optional group (0-255 for RF12B, only 212 allowed for RF12).
 */
 void rf12_initialize () {
-    group = 0xD4;
-
     spi_initialize();
-    
+
     pinMode(RFM_IRQ, INPUT);
     digitalWrite(RFM_IRQ, 1); // pull-up
 
     rf12_xfer(0x0000); // intitial SPI transfer added to avoid power-up problem
 
     rf12_xfer(RF_SLEEP_MODE); // DC (disable clk pin), enable lbd
-    
+
     // wait until RFM12B is out of power-up reset, this takes several *seconds*
     rf12_xfer(RF_TXREG_WRITE); // in case we're still in OOK mode
     while (digitalRead(RFM_IRQ) == 0)
         rf12_xfer(0x0000);
-        
+
     rf12_xfer(0x80C7 | (RF12_433MHZ << 4)); // EL (ena TX), EF (ena RX FIFO), 12.0pF 
     rf12_xfer(0xA640); // 868MHz 
     rf12_xfer(0xC606); // approx 49.2 Kbps, i.e. 10000/29/(1+6) Kbps
@@ -231,11 +235,6 @@ void rf12_initialize () {
 
     rxstate = TXIDLE;
     attachInterrupt(0, rf12_interrupt, LOW);
-
-}
-
-void rf12_onOff (uint8_t value) {
-    rf12_xfer(value ? RF_XMITTER_ON : RF_IDLE_MODE);
 }
 
 void rf12_sleep (char n) {
