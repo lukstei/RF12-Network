@@ -14,8 +14,8 @@ class RoutingTable
   node_t nodes[size];
   
 public:
-  RoutingTable() {
-    root = 0xFF;
+  RoutingTable(node_id id) {
+    root = id;
     nodes[root].parent = root;
   };
   
