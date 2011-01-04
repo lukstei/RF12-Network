@@ -8,4 +8,19 @@ class SensorsController < ApplicationController
 			format.xml { render :xml => @sensor }			
 	end
 	
+	def show
+		@sensor = Sensor.find(params[:id])
+		
+		respond_to do |format|
+			format.html #show.html.erb
+			format.xml { render :xml => @sensor }
+		end 
+	end 
+	
+	def edit
+		@sensor = Sensor.find(params[:id])
+	end
+	
+	
+	
 end
