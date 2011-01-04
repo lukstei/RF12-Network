@@ -1,3 +1,3 @@
 class Station < ActiveRecord::Base
-	has_one :sensor
+	has_many :sensors
 end
