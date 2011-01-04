@@ -19,5 +19,6 @@ public:
   virtual void Tick() = 0;
 };
 
+#include "DidManager.h"
 
 #endif

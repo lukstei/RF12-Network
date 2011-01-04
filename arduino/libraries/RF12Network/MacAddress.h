@@ -35,6 +35,10 @@ private:
   }
 
 public:
+  static void Copy(MacAddress *dest, const MacAddress *src) {
+    memcpy(dest, src, MAC_ADDRESS_LEN);
+  }
+
   void GetAddress(MacAddress *buf)
   {
     if(!_haveRead)

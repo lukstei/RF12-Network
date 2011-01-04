@@ -17,7 +17,8 @@ enum MessageType
   
   DID_DISCOVER,
   DID_REPLY,
-  DID_REQ_ID
+  DID_REQ_ID,
+  DID_ACCEPT
 };
 
 typedef struct Packet
@@ -61,9 +62,10 @@ typedef struct Packet
 
   inline bool IsForMe()
   {
-    return (PacketReceiver == ID_BC && !(Flags & FLAG_MAC_MSG))  // either a broadcaste
+    return ((PacketReceiver == ID_BC && !(Flags & FLAG_MAC_MSG))  // either a broadcast
       || HopReceiver == GetState()->Id // or a message addressed to me 
-      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.Equals((MacAddress*)&RawData)); // or a message addressed to my mac address
+      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.Equals((MacAddress*)&RawData))
+      || (Type == DID_DISCOVER && !GetState()->MacAddressc.Equals((MacAddress*)&RawData))); // or a message addressed to my mac address
   }
 } Packet;
 
@@ -74,7 +76,15 @@ typedef struct
 typedef struct
 {
   MacAddress Address;
+  node_id Id;
   uint8_t HierachyDepth;
 } DynamicIdReply;
+
+typedef struct 
+{
+  MacAddress address;
+  node_id id;
+  node_id parent;
+} DynamicIdAccept;
 
 #endif

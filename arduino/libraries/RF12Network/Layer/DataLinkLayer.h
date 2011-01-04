@@ -45,14 +45,15 @@ public:
       LOGN(3, "MAC: Received msg with len = ", packet->Length);
 
       if(packet->Flags & FLAG_FAIL) {
-        LOG(2, "MAC: transmit: fail");
+        LOGN(2, "MAC: transmit: fail, flags:", packet->Flags);
         GetState()->SendState = State::Failure;
         return;
       }
 
       // send ack
-      if(!(packet->Flags & FLAG_ACK) && packet->HopReceiver != ID_BC) {
-        SendAck(packet);
+      if(!(packet->Flags & FLAG_ACK)) {
+        if(packet->PacketReceiver != ID_BC)
+          SendAck(packet);
 
         ProtocolLayer::ReceiveCallback(packet); // weiter nach oben
       }
@@ -62,7 +63,7 @@ public:
       }
     }
   };
-  
+
   virtual uint8_t Transmit(Packet *packet) 
   {
     LOGN(2, "MAC: transmit packet with length = ", packet->Length);
@@ -78,12 +79,11 @@ public:
       
       GetState()->SendState = State::Waiting;
       _timer.set(PACKET_LEN_MS * random(1, PACKET_MAX_DICE));
-      
       return true;
     }
     else return false;
   };
-  
+
   virtual void Tick() {
     if(GetState()->SendState == State::Acking && _timer.poll()) { // ack timeout
       if(--_retries == 0) {
@@ -105,7 +105,7 @@ public:
         _timer.set(PACKET_LEN_MS * random(1, PACKET_MAX_DICE)); // rearm timer and wait again
       }
       else { // packet sent
-        if(_buf.HopReceiver != ID_BC) {
+        if(_buf.PacketReceiver != ID_BC) {
           LOG(2, "MAC: packet sent, waiting for ack");
 
           GetState()->SendState = State::Acking;

@@ -30,7 +30,6 @@ public:
   
   void ReceiveCallback()
   {
-    LOG(1, "Physical: ISR called");
     memcpy(&_buf, (const void *)rf12_data, rf12_len_safe);
     ReceiveCallback(&_buf);
   };

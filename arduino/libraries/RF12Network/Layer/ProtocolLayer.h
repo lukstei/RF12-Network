@@ -50,5 +50,9 @@ public:
   };
 };
 
+#include "PhysicalLayer.h"
+#include "DataLinkLayer.h"
+#include "SynchronizationLayer.h"
+#include "RoutingLayer.h"
 
 #endif

@@ -31,33 +31,13 @@ public:
 
   node_id GetNextStation(Packet *packet) 
   {
-    //if(packet & )
-    //{
-    //  DynamicId *data = message_type_read<DynamicId>(packet);
-    //  if(data->Parent == GetState()->Id)
-    //    return ID_BC;
-    //  else if(low_address_my_id(&data->Address))
-    //    return data->Parent;
-    //}
-
     node_id child = _table.FindNextHop(packet->PacketReceiver);
     return child != 0 ? child : GetState()->Parent; // either the receiver is lower in the hierachy otherwise send packaet to parent
   };
 
   virtual void ReceiveCallback(Packet *packet)  
   {
-    /*if(packet->Flags & FLAG_FAIL) {
-      LOG(4, "received message with fail flag");
-
-      if(_table.Find(packet->HopSender)) 
-        _table.RemoveNode(packet->HopSender);
-      else
-        GetState()->Parent = 0xFF;
-
-      return NULL;
-    }*/
-    
-    if(packet->PacketReceiver != GetState()->Id) 
+    if(packet->PacketReceiver != GetState()->Id && packet->PacketReceiver != ID_BC) 
     {
       if(GetState()->InitializationDone()) 
       {
@@ -73,13 +53,16 @@ public:
         // TODO: implement error handling
       }
     }
-    else return ProtocolLayer::ReceiveCallback(packet);
+    else {
+      LOGN(4, "Received message type = ", packet->Type);
+      return ProtocolLayer::ReceiveCallback(packet);
+    }
   };
 
   virtual uint8_t Transmit(Packet *packet) {
     LOG(4, "Routing: transmit");
 
-    if(!(packet->Flags & FLAG_MAC_MSG))
+    if(!(packet->Flags & FLAG_MAC_MSG) && packet->PacketReceiver != ID_BC)
     {
       if(!GetState()->InitializationDone()) return false;
 

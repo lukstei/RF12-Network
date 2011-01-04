@@ -15,6 +15,7 @@ public:
   SynchronizationLayer() :
     ProtocolLayer()
   {
+    _sync = false;
   };
   
   SynchronizationLayer(ProtocolLayer &layer) :
@@ -23,7 +24,8 @@ public:
     SynchronizationLayer();
   };
   
-  virtual void ReceiveCallback(Packet *packet)  {
+  virtual void ReceiveCallback(Packet *packet)  
+  {
     _sync = true;
     _lastPacket = packet;
     
@@ -44,17 +46,25 @@ public:
     return GetState()->SendState == State::Idle;
   };
   
-  Packet *receive(int timeout = 10000) {
-    LOG(5, "receiveing pckt");
-    
-    _sync = false;
-    _timer.set(timeout); // timeout
-    
-    while(!_sync && !_timer.poll()) 
-      Tick();
-      
-    LOGN(5, "receive =", _sync);
-    return _sync ? _lastPacket : NULL;
+//   Packet *receive(int timeout = 10000) {
+//     LOG(5, "receiveing pckt");
+//     
+//     _sync = false;
+//     _timer.set(timeout); // timeout
+//     
+//     while(!_sync && !_timer.poll()) 
+//       Tick();
+//       
+//     LOGN(5, "receive =", _sync);
+//     return _sync ? _lastPacket : NULL;
+//   };
+
+  bool ReceivePacket(Packet *pck) {
+    if(_sync) {
+      memcpy(pck, _lastPacket, sizeof(*pck));
+      return true;
+    }
+    return false;
   };
   
   virtual void Tick() {

@@ -31,6 +31,7 @@ public:
           DynamicIdReply rep = p.OfType<DynamicIdReply>(DID_REPLY);
           memcpy(rep.Address, packet->RawData, MAC_ADDRESS_LEN);
           rep.HierachyDepth = GetState()->HierachyDepth;
+          rep.Id = GetState()->Id;
 
           _net.Transmit(&p);
         }
@@ -40,10 +41,48 @@ public:
       {
         DynamicIdReply rep = packet->GetData<DynamicIdReply>();
         if(rep.HierachyDepth + 1 < GetState()->HierachyDepth ) {
-          LOGN(5, "Found new parent: ", packet->PacketSender);
+          LOGN(5, "Found new parent: ", rep.Id);
 
-          GetState()->Parent = packet->PacketSender;
+          GetState()->Parent = rep.Id;
           GetState()->HierachyDepth = rep.HierachyDepth + 1;
+        }
+      }
+
+    case DID_REQ_ID:
+      {
+        MacAddress& rep = packet->GetData<MacAddress>();
+
+#if IS_MASTER
+        static uint8_t ids = 2;
+        LOGN(5, "new member with node id = ", ids+1);
+        
+        Packet p(packet->PacketSender);
+
+        DynamicIdAccept n = p.OfType<DynamicIdAccept>(DID_ACCEPT);
+        n.id = ids++;
+        n.parent = packet->PacketSender;
+        MacAddressManager::Copy(&n.address, &rep);
+
+        _net.Transmit(&p);
+#endif
+      }
+
+    case DID_ACCEPT:
+      {
+        if(GetState()->InitializationDone() && packet->HopSender != GetState()->Id) 
+        {
+          LOG(5, "got DID_ACCEPT forwarding to station");
+          packet->HopSender = GetState()->Id;
+          packet->Flags |= FLAG_MAC_MSG;
+          packet->PacketReceiver = ID_BC;
+          _net.Transmit(packet);
+        }
+        else
+        {
+          DynamicIdAccept acc = packet->GetData<DynamicIdAccept>();
+          
+          LOGN(5, "got an id! :", acc.id);
+          GetState()->Id = acc.id;
         }
       }
     }
@@ -51,19 +90,30 @@ public:
   
   virtual void Tick() 
   {
-    if(GetState()->Parent = 0xFF && timer.poll(5000))
+    if(GetState()->Parent == 0xFF && timer.poll(5000))
     {
       LOG(5, "searching for parents");
 
       Packet p(ID_BC);
 
-      MacAddress mac = p.OfType<MacAddress>(DID_DISCOVER);
+      MacAddress& mac = p.OfType<MacAddress>(DID_DISCOVER);
       GetState()->MacAddressc.GetAddress(&mac);
 
       _net.Transmit(&p);
     }
-    else if(GetState()->Parent != 0xFF && GetState()->Id == 0xFF) {
+    else if(GetState()->Parent != 0xFF && GetState()->Id == 0xFF) 
+    {
+      LOG(5, "requesting id");
 
+      Packet p(ID_MASTER);
+      p.HopReceiver = GetState()->Parent;
+      p.Flags |= FLAG_MAC_MSG;
+      p.PacketSender = GetState()->Parent;
+
+      MacAddress& mac = p.OfType<MacAddress>(DID_REQ_ID);
+      GetState()->MacAddressc.GetAddress(&mac);
+
+      _net.Transmit(&p);
     }
   }
 };

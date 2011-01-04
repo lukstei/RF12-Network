@@ -11,13 +11,15 @@ typedef uint8_t node_id;
 // cmsa/ca: wait for (1 up to PACKET_MAX_DICE) * PACKET_LEN_MS
 #define PACKET_MAX_DICE       7
 
-#define PACKET_LEN_MS         50
-#define PACKET_WAIT_FOR_ACK   49
+#define PACKET_LEN_MS         30
+#define PACKET_WAIT_FOR_ACK   28
 
 #define MAX_RETRIES           4
 #define MAX_NODES             255
 
-#define IS_MASTER          1
+#ifndef IS_MASTER
+# define IS_MASTER          1
+#endif
 
 #ifndef DEBUG
 # define DEBUG                 1
@@ -44,6 +46,42 @@ typedef uint8_t node_id;
 # define LOGC(n, ch) 
 # define LOGM(n, str, enu)
 #endif
+
+#include "Layer/RoutingLayer.h"
+#include "Manager/Manager.h"
+
+class Network
+{
+protected:
+  PhysicalLayer l1;
+  DataLinkLayer l2;
+  SynchronizationLayer l3;
+  RoutingLayer l4;
+
+  DidManager m1;
+
+  Manager* manager[1];
+  Packet packet;
+
+public:
+  Network() :
+      l1(), l2(l1), l3(l2), l4(l3),
+      m1(l4) 
+      {
+        manager[0] = &m1;
+      }
+
+  void Tick()
+  {
+    l4.Tick();
+    m1.Tick();
+
+    if(l3.ReceivePacket(&packet)) // call  sync-layer
+    {
+      m1.Received(&packet);
+    }
+  }
+};
 
 
 #include "Layer/PhysicalLayer.h"
