@@ -3,3 +3,5 @@ master/Master/Master/Debug/
 private/
 *.sdf
 *.opensdf
+*.exe
+*.dll
