@@ -1,6 +1,10 @@
-DiplomarbeitWebApp::Application.routes.draw do
+﻿DiplomarbeitWebApp::Application.routes.draw do
 	root :to => "homepage#index"	
-	resources :sensors
+	resources :sensors do 
+		resources :measured_datas
+	end 
+	resources :stations 
+	resource :hompage
 	
   # The priority is based upon order of creation:
   # first created -> highest priority.

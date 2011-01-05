@@ -1,2 +1,3 @@
-class MeasuredData < ActiveRecord::Base
+﻿class MeasuredData < ActiveRecord::Base
+	belongs_to :sensor
 end

@@ -7,7 +7,7 @@ class RemoveMesszeit < ActiveRecord::Migration
 
   def self.down
 	change_table :measured_datas do |t|
-		column :messzeit
+		t.column :messzeit
 	end
   end   
 end

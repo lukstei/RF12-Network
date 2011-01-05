@@ -1,4 +1,4 @@
-class HomepageController < ApplicationController
+﻿class HomepageController < ApplicationController
 
 	def index
 		respond_to do |format|
