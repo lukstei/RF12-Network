@@ -35,6 +35,29 @@ public:
     return child != 0 ? child : GetState()->Parent; // either the receiver is lower in the hierachy otherwise send packaet to parent
   };
 
+  virtual void HandleMessage(Packet *p) {
+    switch(p->Type) {
+    case DID_ACCEPT: 
+      {
+        DynamicIdAccept *did = p->GetData<DynamicIdAccept>();
+        LOGN2(4, "Added to table [node, parent]", did->id, did->parent);
+        _table.AddNode(did->id, did->parent);
+      } break;
+    case NODE_DOWN:
+      {
+        node_id *node = p->GetData<node_id>();
+        LOGN(4, "Removed from table:", *node);
+        _table.RemoveNode(*node);
+      } break;
+    case NODE_CHANGE_PARENT:
+      {
+        NodeNewParent *newParent = p->GetData<NodeNewParent>();
+        LOGN2(4, "node has new parent [node, parent]", newParent->id, newParent->newParent);
+        _table.AddNode(newParent->id, newParent->newParent);
+      } break;
+    }
+  }
+
   virtual void ReceiveCallback(Packet *packet)  
   {
     if(packet->PacketReceiver != GetState()->Id && packet->PacketReceiver != ID_BC) 
@@ -53,7 +76,8 @@ public:
         // TODO: implement error handling
       }
     }
-    else {
+    else 
+    {
       LOGN(4, "Received message type = ", packet->Type);
       return ProtocolLayer::ReceiveCallback(packet);
     }
@@ -62,13 +86,22 @@ public:
   virtual uint8_t Transmit(Packet *packet) {
     LOG(4, "Routing: transmit");
 
+    if(packet->PacketReceiver == ID_BC && packet->Flags & FLAG_NEED_ACK) // no ack on broadcast
+      packet->Flags &= ~FLAG_NEED_ACK;
+
+
     if(!(packet->Flags & FLAG_MAC_MSG) && packet->PacketReceiver != ID_BC)
     {
       if(!GetState()->InitializationDone()) return false;
 
+      if(packet->PacketReceiver == GetState()->Id) { // loopback {
+        ReceiveCallback(packet);
+        return true;  
+      }
+
       packet->HopReceiver = GetNextStation(packet);
       if(IS_MASTER && packet->HopReceiver == ID_MASTER) {
-        LOGN(4, "Cannot route package with type: ", packet->Type);
+        LOGN(4, "Cannot route package (station not found) with type: ", packet->Type);
         return false;
       }
 
@@ -79,6 +112,8 @@ public:
       HopNotAvailable(packet->HopReceiver);
       return false;
     }
+
+    return true;
   };
 
   void HopNotAvailable(node_id node)
@@ -89,7 +124,11 @@ public:
     else
     {
       _table.RemoveNode(node);
-      // TODO: inform parents
+      
+      Packet p(ID_MASTER);
+      node_id *down = p.OfType<node_id>(NODE_DOWN);
+      *down = node;
+      Transmit(&p);
     }
   }
 

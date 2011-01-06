@@ -9,7 +9,7 @@ class RoutingTable
     node_t() : parent(0) {}; 
     node_id parent; 
   } node_t;
-   // TODO  :: umschreiben keine ptr sondern zahlen verwenden
+
   node_id root;
   node_t nodes[size];
 

@@ -51,7 +51,7 @@ public:
       _haveRead = true;
     }
 
-    memcpy(buf, &_address, sizeof(MacAddress));
+    memcpy(buf, &_address, MAC_ADDRESS_LEN);
   }
 
   bool Equals(MacAddress *other) const
@@ -61,6 +61,7 @@ public:
     for(uint8_t i = 0; i < MAC_ADDRESS_LEN; ++i) {
       if((*other)[i] != _address[i]) return false;
     }
+
     return true;
   }
 };
