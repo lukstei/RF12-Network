@@ -11,6 +11,7 @@
 // 2: MacLayer
 // 3: SynchronizationLayer
 // 4: RoutingLayer
+// 5: ApplicationLayer
 
 class ProtocolLayer
 {
@@ -54,5 +55,6 @@ public:
 #include "DataLinkLayer.h"
 #include "SynchronizationLayer.h"
 #include "RoutingLayer.h"
+#include "ApplicationLayer.h"
 
 #endif

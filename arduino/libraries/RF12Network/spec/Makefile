@@ -1,16 +1,18 @@
 CSPEC = cspec
 CSPEC_DIR = D:/Dev/cspec/
 CC = gcc
+CPP = c++
 
 all: clean test
   
 clean:
 	
 build_tests:
-	$(CC) $(CSPEC_DIR)build/cspec.o test.c -std=c99 -I $(CSPEC_DIR)src -o ./test
+	$(CPP) RoutingTable.c -I $(CSPEC_DIR)src -I ../ -o ./objs.o
+	$(CC) $(CSPEC_DIR)build/cspec.o RoutingTable.o -std=c99 -I $(CSPEC_DIR)src -I ../ -o ./test
 		
 parse_tests:
-	$(CSPEC) < test.spec > test.c
+	$(CSPEC) < RoutingTable.spec > RoutingTable.c
 		
 test: parse_tests build_tests
 	@echo

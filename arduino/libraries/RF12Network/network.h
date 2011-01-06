@@ -57,6 +57,7 @@ protected:
   DataLinkLayer l2;
   SynchronizationLayer l3;
   RoutingLayer l4;
+  ApplicationLayer l5;
 
   DidManager m1;
 
@@ -65,18 +66,18 @@ protected:
 
 public:
   Network() :
-      l1(), l2(l1), l3(l2), l4(l3),
-      m1(l4) 
+      l1(), l2(l1), l3(l2), l4(l3), l5(l4),
+      m1(l5) 
       {
         manager[0] = &m1;
       }
 
   void Tick()
   {
-    l4.Tick();
+    l5.Tick();
     m1.Tick();
 
-    if(l3.ReceivePacket(&packet)) // call  sync-layer
+    if(l5.ReceivePacket(&packet)) // call app-layer
     {
       m1.Received(&packet);
     }

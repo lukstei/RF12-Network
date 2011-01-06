@@ -4,12 +4,13 @@
 #include <WProgram.h>
 #include "State.h"
 
-#define SIZE_HEADER   7
+#define SIZE_HEADER   8
 #define SIZE_DATA     MAX_DATA - SIZE_HEADER
 
 #define FLAG_ACK      1
-#define FLAG_FAIL     2
-#define FLAG_MAC_MSG  4
+#define FLAG_NEED_ACK 2
+#define FLAG_FAIL     4
+#define FLAG_MAC_MSG  8
 
 enum MessageType
 {
@@ -18,19 +19,27 @@ enum MessageType
   DID_DISCOVER,
   DID_REPLY,
   DID_REQ_ID,
-  DID_ACCEPT
+  DID_ACCEPT,
+
+  NODE_DOWN,
+  NODE_CHANGE_PARENT
 };
 
 typedef struct Packet
 {
   Packet() :
     Length(0),
-    Flags(0) {}
+    Flags(FLAG_NEED_ACK),
+    Type(MSG_EMPTY), 
+    PacketReceiver(0xFF), PacketSender(0xFF) {
+    }
   
   Packet(node_id recv) :
-    PacketReceiver(recv)
+      Length(0),
+      Flags(FLAG_NEED_ACK),
+      Type(MSG_EMPTY), 
+      PacketReceiver(recv), PacketSender(0xFF) 
     {
-      Packet();
     }
 
   uint8_t Length;
@@ -47,25 +56,25 @@ typedef struct Packet
   uint8_t RawData[SIZE_DATA];
 
   template <class T>
-  inline T& OfType(MessageType type)
+  inline T* OfType(MessageType type)
   {
     Type = type;
     Length = sizeof(T) + SIZE_HEADER;
-    return (T &)RawData;
+    return (T *)&RawData;
   }
 
   template <class T>
-  inline T& GetData()
+  inline T* GetData()
   {
-    return (T &)RawData;
+    return (T *)&RawData;
   }
 
   inline bool IsForMe()
   {
     return ((PacketReceiver == ID_BC && !(Flags & FLAG_MAC_MSG))  // either a broadcast
       || HopReceiver == GetState()->Id // or a message addressed to me 
-      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.Equals((MacAddress*)&RawData))
-      || (Type == DID_DISCOVER && !GetState()->MacAddressc.Equals((MacAddress*)&RawData))); // or a message addressed to my mac address
+      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.Equals(GetData<MacAddress>())) // or a message addressed to my mac address
+      || (Type == DID_DISCOVER && !GetState()->MacAddressc.Equals(GetData<MacAddress>()))); // or a discover message
   }
 } Packet;
 
@@ -86,5 +95,11 @@ typedef struct
   node_id id;
   node_id parent;
 } DynamicIdAccept;
+
+typedef struct
+{
+  node_id id;
+  node_id newParent;
+} NodeNewParent;
 
 #endif

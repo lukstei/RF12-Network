@@ -7,7 +7,7 @@
 
 class DataLinkLayer : public ProtocolLayer {
 protected:
-  Packet _buf;
+  Packet *_buf;
   MilliTimer _timer;
   uint8_t _retries;
 
@@ -15,15 +15,17 @@ private:
   inline void SendAck(Packet *packet)
   {
     uint8_t origHeadLength = packet->Length;
+    uint8_t origFlags = packet->Flags;
+    
     packet->Length = SIZE_HEADER;
 
     LOG(2, "MAC: sending ack");
-    packet->Flags |= FLAG_ACK;
+    packet->Flags = FLAG_ACK;
 
     ProtocolLayer::Transmit(packet);
 
     packet->Length = origHeadLength;
-    packet->Flags &= (~FLAG_ACK);
+    packet->Flags = origFlags;
   }
  
 public:
@@ -52,7 +54,7 @@ public:
 
       // send ack
       if(!(packet->Flags & FLAG_ACK)) {
-        if(packet->PacketReceiver != ID_BC)
+        if(packet->Flags & FLAG_NEED_ACK)
           SendAck(packet);
 
         ProtocolLayer::ReceiveCallback(packet); // weiter nach oben
@@ -66,14 +68,15 @@ public:
 
   virtual uint8_t Transmit(Packet *packet) 
   {
-    LOGN(2, "MAC: transmit packet with length = ", packet->Length);
+    LOGN(2, "MAC: transmit packet with flags = ", packet->Flags);
     
     if( GetState()->SendState == State::Idle || 
         GetState()->SendState == State::Retrying || 
         GetState()->SendState == State::Failure) 
     {
       if(GetState()->SendState != State::Retrying) {
-        memcpy(&_buf, packet, packet->Length); // TODO: memcpy unnoetig?
+        //memcpy(&_buf, packet, packet->Length); // TODO: memcpy unnoetig?
+        _buf = packet;
         _retries = MAX_RETRIES;
       }
       
@@ -94,25 +97,25 @@ public:
       else {
         LOGN(2, "MAC: retries left: ", _retries);
         GetState()->SendState = State::Retrying;
-        Transmit(&_buf);
+        Transmit(_buf);
       }
     }
     else if(GetState()->SendState == State::Waiting && _timer.poll()) 
     {
-      if(!ProtocolLayer::Transmit(&_buf))  // medium busy
+      if(!ProtocolLayer::Transmit(_buf))  // medium busy
       {
         LOG(2, "MAC: medium busy");
         _timer.set(PACKET_LEN_MS * random(1, PACKET_MAX_DICE)); // rearm timer and wait again
       }
       else { // packet sent
-        if(_buf.PacketReceiver != ID_BC) {
+        if(_buf->Flags & FLAG_NEED_ACK) {
           LOG(2, "MAC: packet sent, waiting for ack");
 
           GetState()->SendState = State::Acking;
           _timer.set(PACKET_WAIT_FOR_ACK);
         }
         else {
-          LOG(2, "Broadcast sent");
+          LOG(2, "Message sent");
           GetState()->SendState = State::Idle;
         }
       }
