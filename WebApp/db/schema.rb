@@ -10,12 +10,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110106200202) do
+ActiveRecord::Schema.define(:version => 20110107173945) do
 
   create_table "groups", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "groups_sensors", :id => false, :force => true do |t|
+    t.integer "sensor_id"
+    t.integer "group_id"
   end
 
   create_table "measured_datas", :force => true do |t|
@@ -35,16 +40,27 @@ ActiveRecord::Schema.define(:version => 20110106200202) do
   end
 
   create_table "sensors", :force => true do |t|
-    t.string   "typ"
     t.string   "port"
     t.string   "station"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "task_id"
+    t.integer  "station_id"
+    t.string   "name"
+    t.integer  "sensor_type_id"
   end
 
   create_table "stations", :force => true do |t|
     t.string   "sensor"
     t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tasks", :force => true do |t|
+    t.string   "title"
+    t.string   "sensor"
+    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

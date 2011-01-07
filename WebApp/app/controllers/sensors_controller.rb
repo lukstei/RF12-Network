@@ -1,5 +1,14 @@
-class SensorsController < ApplicationController
+﻿class SensorsController < ApplicationController
 
+	# GET \sensors
+	def index
+		@sensors = Sensor.all
+		
+		respond_to do |format|
+			format.html
+		end 
+	end
+	
 	def new
 		@sensor = Sensor.new
 		
@@ -12,7 +21,7 @@ class SensorsController < ApplicationController
 		@sensor = Sensor.find(params[:id])
 		
 		respond_to do |format|
-			format.html #show.html.erb
+			format.html 
 		end 
 	end 
 	
@@ -21,7 +30,6 @@ class SensorsController < ApplicationController
 	end
 	
 	#POST /sensors
-	#POST /sensors.xml
 	def create
 		@sensor = Sensor.new(params[:sensor])
 		
@@ -39,7 +47,7 @@ class SensorsController < ApplicationController
 		
 		respond_to do |format|
 			if @sensor.update_attributes(params[:sensor])
-				format.html { redirect_to @sensor, :notice => 'Anderungen erfolgreich gespeichert' }
+				format.html { redirect_to @sensor, :notice => 'Änderungen erfolgreich gespeichert' }
 			else
 				format.html { render :action => "edit" }
 			end

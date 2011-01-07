@@ -1,4 +1,9 @@
 WebApp::Application.routes.draw do
+	root :to => "tasks#index"
+	resources :sensors do
+		resources :sensor_types
+	end 
+	resources :tasks
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
