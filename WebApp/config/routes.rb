@@ -4,6 +4,7 @@ WebApp::Application.routes.draw do
 		resources :sensor_types
 	end 
 	resources :tasks
+	match '/input' => "measured_data#create", :as => "input"
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
