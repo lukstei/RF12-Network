@@ -5,7 +5,7 @@
 #include "ProtocolLayer.h"
 
 class ApplicationLayer : public ProtocolLayer 
-{
+{  // TODO: noch einen Synclayer drüberlegen der solange blockt bis die nachricht wirklich angekommen ist!
   bool _received;
   Packet *_lastPacket;
 

@@ -1,6 +1,7 @@
 master/Master/Debug/
 master/Master/Master/Debug/
 private/
+MasterBluetoothBridge-build-simulator/
 *.sdf
 *.opensdf
 *.exe

@@ -35,24 +35,21 @@ public:
     return child != 0 ? child : GetState()->Parent; // either the receiver is lower in the hierachy otherwise send packaet to parent
   };
 
-  virtual void HandleMessage(Packet *p) {
+  void HandleMessage(Packet *p) {
     switch(p->Type) {
     case DID_ACCEPT: 
       {
         DynamicIdAccept *did = p->GetData<DynamicIdAccept>();
-        LOGN2(4, "Added to table [node, parent]", did->id, did->parent);
         _table.AddNode(did->id, did->parent);
       } break;
     case NODE_DOWN:
       {
         node_id *node = p->GetData<node_id>();
-        LOGN(4, "Removed from table:", *node);
         _table.RemoveNode(*node);
       } break;
     case NODE_CHANGE_PARENT:
       {
         NodeNewParent *newParent = p->GetData<NodeNewParent>();
-        LOGN2(4, "node has new parent [node, parent]", newParent->id, newParent->newParent);
         _table.AddNode(newParent->id, newParent->newParent);
       } break;
     }
@@ -60,6 +57,8 @@ public:
 
   virtual void ReceiveCallback(Packet *packet)  
   {
+    HandleMessage(packet);
+
     if(packet->PacketReceiver != GetState()->Id && packet->PacketReceiver != ID_BC) 
     {
       if(GetState()->InitializationDone()) 
@@ -89,12 +88,12 @@ public:
     if(packet->PacketReceiver == ID_BC && packet->Flags & FLAG_NEED_ACK) // no ack on broadcast
       packet->Flags &= ~FLAG_NEED_ACK;
 
-
     if(!(packet->Flags & FLAG_MAC_MSG) && packet->PacketReceiver != ID_BC)
     {
       if(!GetState()->InitializationDone()) return false;
 
       if(packet->PacketReceiver == GetState()->Id) { // loopback {
+        LOG(4, "Loopback");
         ReceiveCallback(packet);
         return true;  
       }

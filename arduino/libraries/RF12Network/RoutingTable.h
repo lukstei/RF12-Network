@@ -15,9 +15,13 @@ class RoutingTable
 
 public:
   RoutingTable() {
-    root = 0xFF;
-    nodes[root].parent = root;
+    SetRoot(0xFF);
   };
+
+  inline void SetRoot(node_id id) {
+    root = id;
+    nodes[root].parent = root;
+  }
 
   inline node_id GetRoot() {
     return root;
@@ -60,8 +64,10 @@ public:
     return found;
   };
   
-  void AddNode(node_id val, node_id after) {
+  void AddNode(node_id val, node_id after) 
+  {// TODO: was machen wenn er die node id von sich selber gibt?
     if(nodes[after].parent == 0) return; // wtf?
+    LOGN2(6, "Added to table [node, parent]", val, after);
 
     nodes[val].parent = after;
   };
@@ -74,6 +80,8 @@ public:
       if(nodes[i].parent == val) 
         nodes[i].parent = 0; 
     }
+
+    LOGN(6, "Removed node", val);
 
     nodes[val].parent = 0;
   };
