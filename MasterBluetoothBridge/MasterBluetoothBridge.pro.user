@@ -46,7 +46,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Debug</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/My Dropbox/da/MasterBluetoothBridge-build-simulator</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/dev/MasterBluetoothBridge-build-simulator</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
@@ -80,7 +80,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Release</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/My Dropbox/da/MasterBluetoothBridge-build-simulator</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/dev/MasterBluetoothBridge-build-simulator</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">3</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">true</value>
@@ -107,7 +107,7 @@
   <valuemap type="QVariantMap">
    <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Symbian-Gerät</value>
    <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Target.S60DeviceTarget</value>
-   <value key="ProjectExplorer.Target.ActiveBuildConfiguration" type="int">0</value>
+   <value key="ProjectExplorer.Target.ActiveBuildConfiguration" type="int">1</value>
    <value key="ProjectExplorer.Target.ActiveRunConfiguration" type="int">0</value>
    <valuemap key="ProjectExplorer.Target.BuildConfiguration.0" type="QVariantMap">
     <valuemap key="ProjectExplorer.BuildConfiguration.BuildStep.0" type="QVariantMap">
@@ -148,7 +148,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Debug</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">2</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/My Dropbox/da/MasterBluetoothBridge</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/dev/MasterBluetoothBridge</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">6</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">false</value>
@@ -192,7 +192,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.DisplayName" type="QString">Release</value>
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.Qt4BuildConfiguration</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration" type="int">0</value>
-    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/My Dropbox/da/MasterBluetoothBridge</value>
+    <value key="Qt4ProjectManager.Qt4BuildConfiguration.BuildDirectory" type="QString">D:/dev/MasterBluetoothBridge</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.QtVersionId" type="int">2</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.ToolChain" type="int">6</value>
     <value key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild" type="bool">false</value>
@@ -203,7 +203,7 @@
     <value key="ProjectExplorer.ProjectConfiguration.Id" type="QString">Qt4ProjectManager.S60DeviceRunConfiguration</value>
     <valuelist key="Qt4ProjectManager.S60DeviceRunConfiguration.CommandLineArguments" type="QVariantList"/>
     <value key="Qt4ProjectManager.S60DeviceRunConfiguration.ProFile" type="QString">MasterBluetoothBridge.pro</value>
-    <value key="Qt4ProjectManager.S60DeviceRunConfiguration.SerialPortName" type="QString">COM5</value>
+    <value key="Qt4ProjectManager.S60DeviceRunConfiguration.SerialPortName" type="QString"></value>
    </valuemap>
    <value key="ProjectExplorer.Target.RunConfigurationCount" type="int">1</value>
   </valuemap>
