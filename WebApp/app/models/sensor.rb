@@ -4,8 +4,10 @@ class Sensor < ActiveRecord::Base
 	belongs_to :sensor_type
 	has_many :measured_datas
 	
-	 validates :name, :port, :station, :presence => true
+	 validates :name, :station, :presence => true
 	 validates :sensor_type, :presence => true 
+	 validates :port,	:presence => true,
+							:uniqueness => true 
 	
 	
 end

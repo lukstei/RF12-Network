@@ -1,1 +1,1 @@
-﻿<%= simple_form_for @task do |f| %>	<%= f.input :title %>	<%= f.input :description %>	<%= f.association :sensors %>oder <%= link_to "Neuen Sensor erstellen", new_sensor_path %>	<%= f.button :submit %><% end %>
+﻿<%= simple_form_for @task do |f| %>	<%= f.input :title %>	<%= f.input :description %>	<%= f.association :sensors %>	<%= f.button :submit %><% end %>

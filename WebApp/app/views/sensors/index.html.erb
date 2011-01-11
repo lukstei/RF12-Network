@@ -1,1 +1,8 @@
-﻿<%= render @sensors %>
+﻿<% content_for :title, "Sensoren" %>
+<h2>Sensoren</h2>
+
+<%= render @sensors %>
+
+<div id="create">
+	<%= link_to "Neuen Sensor erstellen", new_sensor_path %>
+</div>

@@ -1,0 +1,11 @@
+﻿<% div_for sensor do %>
+	<h4>
+		<%= link_to sensor.name, sensor %>
+			<span class="actions">
+				<%= link_to "Bearbeiten", edit_sensor_path(sensor) %>
+				<%= link_to "Löschen", sensor, :confirm => "Sind Sie sicher?", :method => :delete %>
+			</span>
+	</h4>
+<% end %> 
+	
+	

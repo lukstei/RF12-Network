@@ -1,4 +1,5 @@
 WebApp::Application.routes.draw do
+
 	root :to => "tasks#index"
 	resources :sensors do 
 		resources :measured_datas
