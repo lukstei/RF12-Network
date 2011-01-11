@@ -1,6 +1,6 @@
 ﻿class TasksController < ApplicationController
 
-	# GET \tasks
+	# GET /tasks
 	def index
 		@tasks = Task.all
 		

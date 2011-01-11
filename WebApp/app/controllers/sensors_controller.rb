@@ -1,6 +1,6 @@
 ﻿class SensorsController < ApplicationController
 
-	# GET \sensors
+	# GET /sensors
 	def index
 		@sensors = Sensor.all
 		

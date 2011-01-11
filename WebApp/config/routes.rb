@@ -1,10 +1,12 @@
 WebApp::Application.routes.draw do
 	root :to => "tasks#index"
-	resources :sensors do
-		resources :sensor_types
+	resources :sensors do 
+		resources :measured_datas
 	end 
+	resources :sensor_types
 	resources :tasks
 	match '/input' => "measured_data#create", :as => "input"
+	
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

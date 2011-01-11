@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110107173945) do
+ActiveRecord::Schema.define(:version => 20110111091315) do
 
   create_table "groups", :force => true do |t|
     t.string   "name"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(:version => 20110107173945) do
     t.integer  "messdaten_int"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sensor_id"
+    t.datetime "messzeit"
   end
 
   create_table "sensor_types", :force => true do |t|
@@ -55,6 +57,7 @@ ActiveRecord::Schema.define(:version => 20110107173945) do
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "adress"
   end
 
   create_table "tasks", :force => true do |t|
