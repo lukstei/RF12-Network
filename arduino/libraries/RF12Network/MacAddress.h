@@ -4,10 +4,7 @@
 #include <avr/eeprom.h>
 #include <WProgram.h>
 
-#define MAC_ADDRESS_LEN 4
 #define MAC_EEPROM_OFFSET 0
-
-typedef uint8_t MacAddress[MAC_ADDRESS_LEN];
 
 class MacAddressManager
 {
@@ -18,7 +15,7 @@ private:
   void Read()
   {
     for(uint8_t i = 0; i < MAC_ADDRESS_LEN; ++i)
-      _address[i] = eeprom_read_byte((unsigned char *) i + MAC_EEPROM_OFFSET);
+      _address.Address[i] = eeprom_read_byte((unsigned char *) i + MAC_EEPROM_OFFSET);
   }
 
   void Generate()
@@ -29,17 +26,13 @@ private:
     for(uint8_t i = 0; i < MAC_ADDRESS_LEN; ++i) {
       uint8_t ran = random(0, 0xFF);
 
-      _address[i] = ran;
+      _address.Address[i] = ran;
       eeprom_write_byte((unsigned char *)i + caddr, ran);
     }
   }
 
 public:
-  static void Copy(MacAddress *dest, const MacAddress *src) {
-    memcpy(dest, src, MAC_ADDRESS_LEN);
-  }
-
-  void GetAddress(MacAddress *buf)
+  const MacAddress &GetAddress()
   {
     if(!_haveRead)
     {
@@ -51,18 +44,7 @@ public:
       _haveRead = true;
     }
 
-    memcpy(buf, &_address, MAC_ADDRESS_LEN);
-  }
-
-  bool Equals(MacAddress *other) const
-  {
-    if(!_haveRead) return false;
-
-    for(uint8_t i = 0; i < MAC_ADDRESS_LEN; ++i) {
-      if((*other)[i] != _address[i]) return false;
-    }
-
-    return true;
+    return _address;
   }
 };
 
