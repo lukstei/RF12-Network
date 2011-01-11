@@ -1,8 +1,11 @@
-#ifndef _MESSAGE_TYPES_H__
-#define _MESSAGE_TYPES_H__
+#ifndef _PACKET_H_
+#define _PACKET_H_
 
-#include <WProgram.h>
-#include "State.h"
+#include "Network.h"
+
+#if RF12_NETWORK_AVR
+# include "State.h"
+#endif
 
 #define SIZE_HEADER   8
 #define SIZE_DATA     MAX_DATA - SIZE_HEADER
@@ -27,11 +30,24 @@ enum MessageType
 
 typedef struct Packet
 {
+  uint8_t Length;
+  uint8_t Flags;
+  
+  node_id HopReceiver;
+  node_id HopSender;
+  
+  MessageType Type;
+
+  node_id PacketReceiver;
+  node_id PacketSender;
+  
+  uint8_t RawData[SIZE_DATA];
+  
   Packet() :
     Length(0),
     Flags(FLAG_NEED_ACK),
-    Type(MSG_EMPTY), 
-    PacketReceiver(0xFF), PacketSender(0xFF) {
+    PacketReceiver(0xFF), PacketSender(0xFF),
+    Type(MSG_EMPTY)  {
     }
   
   Packet(node_id recv) :
@@ -41,20 +57,8 @@ typedef struct Packet
       PacketReceiver(recv), PacketSender(0xFF) 
     {
     }
-
-  uint8_t Length;
-  uint8_t Flags;
   
-  node_id HopReceiver;
-  node_id HopSender;
-
-  node_id PacketReceiver;
-  node_id PacketSender;
-  
-  MessageType Type;
-  
-  uint8_t RawData[SIZE_DATA];
-
+#if RF12_NETWORK_AVR
   template <class T>
   inline T* OfType(MessageType type)
   {
@@ -68,14 +72,15 @@ typedef struct Packet
   {
     return (T *)&RawData;
   }
-
+  
   inline bool IsForMe()
   {
     return ((PacketReceiver == ID_BC && !(Flags & FLAG_MAC_MSG))  // either a broadcast
       || HopReceiver == GetState()->Id // or a message addressed to me 
-      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.Equals(GetData<MacAddress>())) // or a message addressed to my mac address
-      || (Type == DID_DISCOVER && !GetState()->MacAddressc.Equals(GetData<MacAddress>()))); // or a discover message
+      || ((Flags & FLAG_MAC_MSG) && GetState()->MacAddressc.GetAddress() == *GetData<MacAddress>())) // or a message addressed to my mac address
+      || (Type == DID_DISCOVER && !(GetState()->MacAddressc.GetAddress() == *GetData<MacAddress>())); // or a discover message
   }
+#endif
 } Packet;
 
 typedef struct
@@ -101,5 +106,10 @@ typedef struct
   node_id id;
   node_id newParent;
 } NodeNewParent;
+
+typedef struct
+{
+  uint8_t command;
+} NodeCommand;
 
 #endif

@@ -13,16 +13,24 @@ TEMPLATE = app
 SOURCES += main.cpp\
         MainWindow.cpp \
     NetworkManager.cpp \
-    RF12Network.cpp
+    HttpWebApp.cpp \
+    Helper.cpp
 
 HEADERS  += MainWindow.h \
     NetworkManager.h \
-    RF12Network.h
+    WebApp.h \
+    HttpWebApp.h \
+    Helper.h
 
 FORMS    += MainWindow.ui
 
-CONFIG += mobility
+CONFIG += qt mobility 
+QT += network
+
 MOBILITY = 
+
+# !aendern
+INCLUDEPATH += "D:/My Dropbox/da/arduino/libraries/"
 
 symbian {
     TARGET.UID3 = 0xee72dac3

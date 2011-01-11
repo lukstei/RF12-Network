@@ -3,9 +3,9 @@ require 'open-uri'
 
 class MeasuredDataController < ApplicationController
 
-	#POST \input 
-	def create 
-		doc = Nokogori::XML(open()) 
+	#POST /input 
+	def create
+		render :text => params[:data])
 	end 
 	
 end

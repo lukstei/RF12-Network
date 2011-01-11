@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
+#include "HttpWebApp.h"
 #include "NetworkManager.h"
 
 namespace Ui {
@@ -23,6 +25,7 @@ protected slots:
 private:
     Ui::MainWindow *ui;
     NetworkManager *manager;
+    WebApp *webApp;
     
     QAction *connectAction;
 };

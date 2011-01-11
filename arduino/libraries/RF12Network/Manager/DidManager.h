@@ -36,8 +36,7 @@ public:
 
           DynamicIdReply *rep = p.OfType<DynamicIdReply>(DID_REPLY);
 
-          MacAddressManager::Copy(&rep->Address, packet->GetData<MacAddress>());
-
+          rep->Address = MacAddress(*packet->GetData<MacAddress>());
           rep->HierachyDepth = GetState()->HierachyDepth;
           rep->Id = GetState()->Id;
 
@@ -70,7 +69,7 @@ public:
         DynamicIdAccept *n = p.OfType<DynamicIdAccept>(DID_ACCEPT);
         n->id = ids++;
         n->parent = packet->PacketSender;
-        MacAddressManager::Copy(&n->address, rep);
+        n->address = MacAddress(*rep);
 
         _net.Transmit(&p);
 #endif
@@ -123,7 +122,7 @@ public:
       Packet p(ID_BC);
 
       MacAddress *mac = p.OfType<MacAddress>(DID_DISCOVER);
-      GetState()->MacAddressc.GetAddress(mac);
+      *mac = GetState()->MacAddressc.GetAddress();
 
       _net.Transmit(&p);
 
@@ -144,7 +143,7 @@ public:
       p.PacketSender = GetState()->Parent;
 
       MacAddress *mac = p.OfType<MacAddress>(DID_REQ_ID);
-      GetState()->MacAddressc.GetAddress(mac);
+      *mac = GetState()->MacAddressc.GetAddress();
 
       _net.Transmit(&p);
 
