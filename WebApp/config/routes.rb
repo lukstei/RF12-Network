@@ -4,8 +4,8 @@ WebApp::Application.routes.draw do
 	resources :sensors do 
 		resources :measured_datas
 	end
-	resources :stations
 	resources :sensor_types
+	resources :stations
 	resources :tasks
 	
 	match '/input' => "measured_data#create", :as => "input"

@@ -1,4 +1,5 @@
 ﻿class SensorsController < ApplicationController
+	before_filter :load_sensor_type
 
 	# GET /sensors
 	def index
@@ -62,6 +63,11 @@
 			format.html { redirect_to(sensors_url) }
 		end 
 	end 
+	
+	private 
+		def load_sensor_type
+			@sensor_type = SensorType.find(params[:sensor_type_id])
+		end 
 			
 end
 
