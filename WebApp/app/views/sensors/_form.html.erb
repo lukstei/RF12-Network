@@ -1,6 +1,7 @@
 ﻿<%= simple_form_for @sensor do |f| %>
 	<%= f.input :name %>
 	<%= f.association :sensor_type, :prompt => "Sensor Typ auswählen" %>
+	<%= f.input :analog_port, :collection => 1..6, :prompt => "Port Auswählen" %>
 	<%= f.association :station, :prompt => "Station auswählen" %>
 	<%= f.button :submit %>
 <% end %>
