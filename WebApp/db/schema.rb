@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110115124832) do
+ActiveRecord::Schema.define(:version => 20110118083347) do
 
   create_table "measured_datas", :force => true do |t|
     t.integer  "messdaten_int"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20110115124832) do
     t.string   "name"
     t.integer  "sensor_type_id"
     t.integer  "analog_port"
+    t.integer  "intervall"
   end
 
   create_table "stations", :force => true do |t|

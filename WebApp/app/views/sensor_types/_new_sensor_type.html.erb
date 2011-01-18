@@ -1,0 +1,6 @@
+<%= simple_form_for @sensor_type do |f| %>
+	<%= f.input :name %>
+	<%= f.input :unit %>
+	<%= f.input :formula %>
+	<%= f.input :is_analog , :as => :radio %>
+<% end %>
