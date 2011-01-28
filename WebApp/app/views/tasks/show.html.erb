@@ -1,0 +1,14 @@
+﻿<% content_for :title, @task.title %>
+<%= render @task %>
+
+<h4>Sensoren</h4>
+	<div id="sensors">
+		<ul>
+		<% @task.sensors.each do |sensor| %>
+			<li><%= link_to sensor.name, sensor %></li>
+		<% end %>
+		<ul>
+	</div>
+	
+<h4>Messung</h4>
+	<div id="chart" style="width:560px; height:300px;"></div>
