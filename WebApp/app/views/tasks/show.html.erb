@@ -1,40 +1,4 @@
-﻿<script type="text/javascript" charset="utf-8">
-$(function() {
-	new Highcharts.Chart({
-		chart: {
-			renderTo: "chart"
-		},
-		title: {
-			text: "Messung"
-		},
-		xAxis: {
-			type: "datetime"
-		},
-		yAxis: {
-			title: {
-				text: "Einheit"
-			}
-		},
-		tooltip: {
-			formatter: function() {
-				return Highcharts.dateFormat("%B %e, %Y", this.x) + ': ' +
-				"" + Highcharts.numberFormat(this.y, 2);
-			}
-		},
-		series: [
-			<% @task.sensors.each do |sensor| %>
-			{
-				name: "<%= sensor.name %>",
-				pointInterval: <%= sensor.intervall * 1000 %>,
-				data: [ 1, 2, 3, 4, 5, 10, 20 ]
-			},
-			<% end %>
-		]
-	});
- });
- </script>
-
-<% content_for :title, @task.title %>
+﻿<% content_for :title, @task.title %>
 <%= render @task %>
 
 <h4>Sensoren</h4>
@@ -45,6 +9,5 @@ $(function() {
 	<% end %>
 	<ul>
 </div>
-	
-<h4>Messung</h4>
-<div id="chart" style="width:560px; height:300px;"></div>
+
+<%= render "chart" %>

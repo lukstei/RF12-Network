@@ -1,0 +1,37 @@
+<% @task.sensors.each do |sensor| %>
+	<script type="text/javascript" charset="utf-8">
+		$(function() {
+			new Highcharts.Chart({
+				chart: {
+					renderTo: "<%= sensor.name %>"
+				},
+				title: {
+					text: "<%= sensor.name %>"
+				},
+				xAxis: {
+					type: "datetime"
+				},
+				yAxis: {
+					title: {
+						text: "<%= sensor.sensor_type.unit %>"
+					}
+				},
+				tooltip: {
+					formatter: function() {
+						return Highcharts.dateFormat("%B %e, %Y", this.x) + ': ' +
+						Highcharts.numberFormat(this.y, 2) + "<%= sensor.sensor_type.unit %>";
+					}
+				},
+				series: [			
+					{
+						name: "<%= sensor.name %>",
+						pointInterval: <%= sensor.intervall * 1000 %>,
+						data: [ 1, 2, 3, 4, 5, 10, 20 ]
+					}
+				]
+			});
+		 });
+	</script>
+	
+	<div id="<%= sensor.name %>" style="width:560px; height:300px;"></div>
+<% end %> 
