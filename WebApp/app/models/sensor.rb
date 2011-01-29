@@ -5,7 +5,7 @@ class Sensor < ActiveRecord::Base
 	belongs_to :station
 	has_many :measured_datas
 	
-	validates :name, :station, :presence => true
+	validates :name, :station, :intervall, :presence => true
 	validates :sensor_type, :presence => true 
 	validates :analog_port, :presence => true, :uniqueness => { :scope => [ :station_id ] }, :if => :sensor_type_is_analog? 
 		
