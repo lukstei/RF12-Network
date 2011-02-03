@@ -4,5 +4,6 @@
 	<%= f.input :analog_port, :collection => 1..6, :prompt => "Port Auswählen" %>
 	<%= f.association :station, :prompt => "Station auswählen" %>
 	<%= f.input :intervall %>
+	<%= f.input :intervall_unit, :collection => ["sec", "min", "h"], :include_blank => false %>
 	<%= f.button :submit %>
 <% end %>

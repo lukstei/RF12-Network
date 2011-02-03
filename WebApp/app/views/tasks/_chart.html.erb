@@ -5,6 +5,7 @@
 				chart: {
 					renderTo: "<%= sensor.name %>"
 				},
+				colors: [ '#00CC00','#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
 				title: {
 					text: "<%= sensor.name %>"
 				},
@@ -26,6 +27,7 @@
 					{
 						name: "<%= sensor.name %>",
 						pointInterval: <%= sensor.intervall * 1000 %>,
+						pointStart: <%= sensor.measured_datas.first.messzeit %>,
 						data: [ 1, 2, 3, 4, 5, 10, 20 ]
 					}
 				]
