@@ -14,7 +14,8 @@ typedef struct MacAddress
 
   bool operator==(const MacAddress &other) const {
     for(uint8_t i = 0; i < MAC_ADDRESS_LEN; ++i) {
-      if(Address[i] != other.Address[i]) return false;
+      if(Address[i] != other.Address[i]) 
+        return false;
     }
     return true;
   }
