@@ -5,7 +5,7 @@
 				chart: {
 					renderTo: "<%= sensor.name %>"
 				},
-				colors: [ '#00CC00','#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
+				colors: ['#00CC00', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572', '#FF9655', '#FFF263', '#6AF9C4'],
 				title: {
 					text: "<%= sensor.name %>"
 				},
@@ -18,22 +18,28 @@
 					}
 				},
 				tooltip: {
-					formatter: function() {
+					formatter: function(){
 						return Highcharts.dateFormat("%B %e, %Y", this.x) + ': ' +
 						Highcharts.numberFormat(this.y, 2) + "<%= sensor.sensor_type.unit %>";
 					}
 				},
 				series: [			
-					{
+					{   
 						name: "<%= sensor.name %>",
-						pointInterval: <%= sensor.intervall * 1000 %>,
-						pointStart: <%= sensor.measured_datas.first.messzeit %>,
-						data: [ 1, 2, 3, 4, 5, 10, 20 ]
-					}
+						pointInterval: <%= 1.day.to_i * 1000 %>,
+						pointStart: <%= 4.weeks.ago.to_i * 1000 %>,
+						data: <%= data_chart_series(sensor, 4.weeks.ago) %>			  	
+					}		  
 				]
 			});
 		 });
 	</script>
 	
 	<div id="<%= sensor.name %>" style="width:560px; height:300px;"></div>
-<% end %> 
+	<div id="view_bar">
+		<%= link_to "Intraday" %> 
+		<%= link_to "1 Woche" %>
+		<%= link_to "1 Monat" %> 
+		<%= link_to "Seit Beginn" %> 
+	</div>
+<% end %>

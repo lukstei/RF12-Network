@@ -12,5 +12,6 @@ class Sensor < ActiveRecord::Base
 	def sensor_type_is_analog?
 		sensor_type.is_analog
 	end 
-	
 end
+
+
